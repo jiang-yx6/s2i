@@ -4,17 +4,16 @@ from django.contrib.auth.models import User
 class Image(models.Model):
     image_id = models.AutoField(primary_key=True)
     image = models.ImageField(upload_to='images')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    post = models.ForeignKey('UserPost', on_delete=models.CASCADE, related_name='images')
 
     def __str__(self):
-        return f"Image {self.image_id} by {self.user.username}"
+        return f"Image {self.image_id} for post {self.post.title}"
 
 class UserPost(models.Model):
     post_id = models.AutoField(primary_key=True)
     title = models.TextField()
     description = models.TextField()
-    showImages = models.ManyToManyField(Image, related_name='posts')
     browse_count = models.IntegerField(default=0)
     like_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

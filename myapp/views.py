@@ -21,7 +21,6 @@ import os
 import requests
 from s2i import settings
 from exts import token_create
-from exts.SenseVoice.demo import init_model,generate_text
 from exts.MyRequest.getimage import send_message_and_receive_image
 from exts.xfyun_auth import draw_picture
 
@@ -81,71 +80,7 @@ class UserRegister(APIView):
             'msg': '注册失败',
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
-
-class VoiceFileUpload(APIView):
-    def post(self,request, format=None):
-        if 'file' not in request.data:
-            return Response({'error':'No file was uploaded'})
-        print("The Data is: ",request.data)
-        file = request.data['file']
-        filename, file_extension = os.path.splitext(file.name)
-        # if(file_extension.lower() is not ".wav"):
-        #     return Response({'error':'File extension is not supported, you should upload \'.wav\' file'})
-
-        directory = os.path.join(settings.MEDIA_ROOT, 'voice')
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-
-        file_path = os.path.join(directory, file.name)
-        with open(file_path, 'wb+') as destination:
-            for chunk in file.chunks():
-                destination.write(chunk)
-
-        asr_model = init_model()
-        print(file_path)
-        return_text = generate_text(asr_model, file_path)
-        print(return_text)
-
-        #更安全的方式是使用with语句来自动关闭文件
-        host = '127.0.0.1'
-        port = 6006
-        msg = {'msg': return_text}
-
-        # 发送给服务端生图模型
-        response_return_path = send_message_and_receive_image(host, port, return_text)
-
-        response = FileResponse(open(response_return_path, 'rb'))
-        response['Content-Type'] = 'image/jpg'  # 或者根据实际图片类型设置 Content-Type
-        response['Content-Disposition'] = f'inline; filename="{os.path.basename(response_return_path)}"'
-
-        print(response)
-        return response
-
-# 头像上传
-class AvatarUpload(APIView):
-    def post(self, request):
-        # check if file is uploaded
-        if 'file' not in request.data:
-            return Response({'error':'No avatar was uploaded'})
-        file = request.data['file']
-
-        # get avatar directory
-        directory = os.path.join(settings.MEDIA_ROOT,'images/avatar')
-        if not os.path.exists(directory):
-            os.mkdir(directory)
-        file_path = os.path.join(directory,file.name)
-
-        # write avatar file
-        with  open(file_path,'wb') as destination:
-            for chunk in file.chunks():
-                destination.write(chunk)
-
-        # save the db info
-        user_object = User.objects.get(user_id=request.user['user_id'])
-        user_object.avatar = file_path
-        user_object.save()
-        return Response({'msg':'Avatar uploaded successfully'})
-
+    
 class AiDrawPicture(APIView):
     def post(self, request):
         from django.conf import settings
@@ -168,6 +103,71 @@ class AiDrawPicture(APIView):
 
 
 
+
+
+# class VoiceFileUpload(APIView):
+#     def post(self,request, format=None):
+#         if 'file' not in request.data:
+#             return Response({'error':'No file was uploaded'})
+#         print("The Data is: ",request.data)
+#         file = request.data['file']
+#         filename, file_extension = os.path.splitext(file.name)
+#         # if(file_extension.lower() is not ".wav"):
+#         #     return Response({'error':'File extension is not supported, you should upload \'.wav\' file'})
+
+#         directory = os.path.join(settings.MEDIA_ROOT, 'voice')
+#         if not os.path.exists(directory):
+#             os.makedirs(directory)
+
+#         file_path = os.path.join(directory, file.name)
+#         with open(file_path, 'wb+') as destination:
+#             for chunk in file.chunks():
+#                 destination.write(chunk)
+
+#         asr_model = init_model()
+#         print(file_path)
+#         return_text = generate_text(asr_model, file_path)
+#         print(return_text)
+
+#         #更安全的方式是使用with语句来自动关闭文件
+#         host = '127.0.0.1'
+#         port = 6006
+#         msg = {'msg': return_text}
+
+#         # 发送给服务端生图模型
+#         response_return_path = send_message_and_receive_image(host, port, return_text)
+
+#         response = FileResponse(open(response_return_path, 'rb'))
+#         response['Content-Type'] = 'image/jpg'  # 或者根据实际图片类型设置 Content-Type
+#         response['Content-Disposition'] = f'inline; filename="{os.path.basename(response_return_path)}"'
+
+#         print(response)
+#         return response
+
+# # 头像上传
+# class AvatarUpload(APIView):
+#     def post(self, request):
+#         # check if file is uploaded
+#         if 'file' not in request.data:
+#             return Response({'error':'No avatar was uploaded'})
+#         file = request.data['file']
+
+#         # get avatar directory
+#         directory = os.path.join(settings.MEDIA_ROOT,'images/avatar')
+#         if not os.path.exists(directory):
+#             os.mkdir(directory)
+#         file_path = os.path.join(directory,file.name)
+
+#         # write avatar file
+#         with  open(file_path,'wb') as destination:
+#             for chunk in file.chunks():
+#                 destination.write(chunk)
+
+#         # save the db info
+#         user_object = User.objects.get(user_id=request.user['user_id'])
+#         user_object.avatar = file_path
+#         user_object.save()
+#         return Response({'msg':'Avatar uploaded successfully'})
 
 
 

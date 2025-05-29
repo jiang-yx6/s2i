@@ -13,13 +13,13 @@ class TagsSerializer(serializers.ModelSerializer):
         fields = ['tag_id', 'tag_name']
 
 class UserPostSerializer(serializers.ModelSerializer):
-    showImages = ImageSerializer(many=True, read_only=True)
-    tags = TagsSerializer(many=True, read_only=True)
+    images = ImageSerializer(many=True, read_only=True)
     author = serializers.StringRelatedField()
+    tags = TagsSerializer(many=True, read_only=True)
     
     class Meta:
         model = UserPost
-        fields = ['post_id', 'title', 'description', 'showImages', 
+        fields = ['post_id', 'title', 'description', 'images', 
                  'browse_count', 'like_count', 'created_at', 
                  'updated_at', 'author', 'tags']
         read_only_fields = ['post_id', 'browse_count', 'like_count', 

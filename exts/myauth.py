@@ -1,6 +1,7 @@
 from rest_framework import authentication
 import jwt
 from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth.models import User
 
 from s2i.settings import SECRET_KEY
 
@@ -20,7 +21,12 @@ class MyJwtAuthentication(authentication.BaseAuthentication):
                 
                 token = auth_parts[1]
                 payload = jwt.decode(token, algorithms=['HS256'], key=SECRET_KEY)
-                return (payload, token)
+                
+                # 获取用户对象
+                user = User.objects.get(id=payload['user_id'])
+                return (user, token)
+            except User.DoesNotExist:
+                raise AuthenticationFailed('用户不存在')
             except jwt.DecodeError:
                 raise AuthenticationFailed('无效的令牌')
             except jwt.ExpiredSignatureError:

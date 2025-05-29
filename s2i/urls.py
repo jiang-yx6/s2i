@@ -24,16 +24,18 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/login/",views.UserLogin.as_view()),
     path("auth/register/",views.UserRegister.as_view()),
-    path("upload/voice",views.VoiceFileUpload.as_view()),
-    path("upload/avatar",views.AvatarUpload.as_view()),
+    # path("upload/voice",views.VoiceFileUpload.as_view()),
+    # path("upload/avatar",views.AvatarUpload.as_view()),
     
     path("getai/",views.AiDrawPicture.as_view()),
 
-    path("post/create/",community_views.CommunityPostCreate.as_view()),
-    path("post/list/",community_views.CommunityList.as_view()),
-    path("post/detail/<int:pk>/",community_views.CommunityDetail.as_view()),
-    path("post/update/<int:pk>/",community_views.CommunityUpdate.as_view()),
-    path("post/delete/<int:pk>/",community_views.CommunityDelete.as_view()),
-    path("post/like/<int:pk>/",community_views.CommunityLike.as_view()),
-    path("post/save/<int:pk>/", community_views.SavePost.as_view()),
+    path("posts/create/",community_views.CommunityPostCreate.as_view()),
+    path("posts/list/",community_views.CommunityList.as_view()),
+    path("posts/detail/<int:pk>/",community_views.CommunityDetail.as_view()),
+    path("posts/update/<int:pk>/",community_views.CommunityUpdate.as_view()),
+    path("posts/delete/<int:pk>/",community_views.CommunityDelete.as_view()),
+    path("posts/like/<int:pk>/",community_views.CommunityLike.as_view()),
+    path("posts/save/<int:pk>/", community_views.SavePost.as_view()),
+    path('images/<int:image_id>/like/', community_views.ImageLikeView.as_view(), name='image-like'),
+
 ]
