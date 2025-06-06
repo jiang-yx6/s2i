@@ -7,7 +7,6 @@ from s2i.settings import SECRET_KEY
 
 class MyJwtAuthentication(authentication.BaseAuthentication):
     def authenticate(self, request):
-        if request.method == 'POST':
             # 从请求头中获取token
             auth_header = request.headers.get('Authorization')
             if not auth_header:

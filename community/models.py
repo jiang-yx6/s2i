@@ -15,7 +15,9 @@ class UserPost(models.Model):
     title = models.TextField()
     description = models.TextField()
     browse_count = models.IntegerField(default=0)
+    comment_count = models.IntegerField(default=0)
     like_count = models.IntegerField(default=0)
+    like_users = models.ManyToManyField(User, related_name='liked_posts')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
@@ -25,6 +27,18 @@ class UserPost(models.Model):
     
     def __str__(self):
         return self.title
+
+class Comment(models.Model):
+    comment_id = models.AutoField(primary_key=True)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    post = models.ForeignKey(UserPost, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    like_count = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return f"Comment {self.comment_id} on post {self.post.title}"
+    
 
 class Tags(models.Model):
     tag_id = models.AutoField(primary_key=True)

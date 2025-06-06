@@ -22,7 +22,7 @@ class UserLoginSerializer(serializers.Serializer):
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
-
+    
     class Meta:
         model = User
         fields = ['username', 'password']

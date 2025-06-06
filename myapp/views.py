@@ -71,7 +71,10 @@ class UserRegister(APIView):
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+            
             user_serializer = UserSerializer(user)
+
+
             return Response({
                 'msg': '注册成功',
                 'user': user_serializer.data
@@ -81,6 +84,17 @@ class UserRegister(APIView):
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
     
+class GetUserInfo(APIView):
+    def get(self, request):
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'error': '未登录'}, status=401)
+        user_serializer = UserSerializer(user)
+        return Response({
+            'msg': '获取用户信息成功',
+            'user': user_serializer.data
+        }, status=status.HTTP_200_OK)
+
 class AiDrawPicture(APIView):
     def post(self, request):
         from django.conf import settings
